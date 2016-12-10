@@ -5,35 +5,87 @@ open adventday2
 open adventday3
 open adventday4
 open adventday5
+open adventday6
 
 [<EntryPoint>]
 let main argv = 
-//    let input1 = IO.File.ReadAllText(@"D:\adventinput\day1.txt")
-//    let input2 = IO.File.ReadAllText(@"D:\adventinput\day2.txt")
-//    let input3 = IO.File.ReadAllText(@"D:\adventinput\day3.txt")
-//    let input4 = IO.File.ReadAllText(@"D:\adventinput\day4.txt")
-//
-//    printfn "day 1"
-//    let testDistance = navigate input1
-//    printfn "%A" testDistance
-//
-//    printfn "day 2"
-//    let code = genCode input2
-//    printfn "code: %A" code
-//
-//    printfn "day 3"
-//    let triangles = howMany input3
-//    printfn "how many? %A" triangles
-//
-//    printfn "day 4"
-//    let realSum = realRooms input4 |> realRoomSum
-//    printfn "sum of real rooms: %A" realSum
-//
-//    writeToFile (decryptedRooms input4) @"D:\adventinput\day4out.txt"
+    let mutable choice = ""
 
-    printfn "day 5"
-    let code = getCode "ojvtpuvg"
-    printfn "code: %A" code
+    let keepGoing c = if c = "quit" || c = "q" then false else true
 
-    Console.ReadLine() |> ignore
+    while keepGoing choice do
+        printfn "Available: Days 1-6"
+        printfn "Choose a day (quit to quit): "
+
+        choice <- Console.ReadLine()
+
+        match choice with
+        | "1" ->
+            printfn "day 1"
+            let def = @"D:\adventinput\day1.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input1 = tryReadFile (if loc <> "" then loc else def)
+
+            match input1 with
+            | Some(x) -> printfn "%A" (navigate x)
+            | None -> printfn "uh oh, error :("
+        | "2" -> 
+            printfn "day 2"
+            let def = @"D:\adventinput\day2.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input = tryReadFile (if loc <> "" then loc else def)
+
+            match input with
+            | Some(x) -> printfn "code: %A" (genCode x)
+            | None -> printfn "could not read file"
+        | "3" -> 
+            printfn "day 3"
+            let def = @"D:\adventinput\day3.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input = tryReadFile (if loc <> "" then loc else def)
+
+            match input with
+            | Some(x) -> printfn "how many? %A" (howMany x)
+            | None -> printfn "could not read file"
+        | "4" -> 
+            printfn "day 4"
+            let def = @"D:\adventinput\day4.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input = tryReadFile (if loc <> "" then loc else def)
+
+            match input with
+            | Some(x) -> 
+                printfn "sum of real rooms: %A" (realRooms x |> realRoomSum)
+                printfn "write to? "
+                let o = Console.ReadLine()
+                writeToFile (decryptedRooms x) (if o <> "" then loc else @"D:\adventinput\day4out.txt")
+            | None -> printfn "could not read file"
+        | "5" ->
+            printfn "day 5"
+            printfn "This one will take a while!"
+            let def = "ojvtpuvg"
+            printfn "What's your code? (enter for default %A)" def
+            let i = Console.ReadLine()
+            let code = getCode (if i <> "" then i else def)
+            printfn "code: %A" code
+        | "6" -> 
+            printfn "day 6"
+            let def = @"D:\adventinput\day6.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input = tryReadFile (if loc <> "" then loc else def)
+
+            match input with
+            | Some(x) -> printfn "corrected code: %A" (correctError x)
+            | None -> printfn "could not read file"
+        | "quit" | "q" -> 
+            printfn "Bye!"
+        | _ -> 
+            printfn "Unknown choice :("
+
+        Console.ReadLine() |> ignore
     0 // return an integer exit code

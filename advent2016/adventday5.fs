@@ -4,11 +4,6 @@ open utilities
 open System.Security.Cryptography
 open System.Text
 
-let (|Int|_|) str =
-   match System.Int32.TryParse(str) with
-   | (true, int) -> Some(int)
-   | _ -> None
-
 let md5 = MD5.Create()
 
 let hash (str : string) =

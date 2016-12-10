@@ -12,6 +12,12 @@ let (|Int|_|) str =
    | (true, int) -> Some(int)
    | _ -> None
 
+let tryReadFile file =
+    try
+        Some(IO.File.ReadAllText(file))
+    with
+        | _ -> None
+
 let nicePrint list =
     for i in list do
         printfn "%A" i
