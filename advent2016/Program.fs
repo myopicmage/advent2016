@@ -62,7 +62,7 @@ let main argv =
                 printfn "sum of real rooms: %A" (realRooms x |> realRoomSum)
                 printfn "write to? "
                 let o = Console.ReadLine()
-                writeToFile (decryptedRooms x) (if o <> "" then loc else @"D:\adventinput\day4out.txt")
+                writeToFile (decryptedRooms x) (if o <> "" then o else @"D:\adventinput\day4out.txt")
             | None -> printfn "could not read file"
         | "5" ->
             printfn "day 5"

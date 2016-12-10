@@ -11,12 +11,11 @@ type room = {
 }
 
 let genChecksum (name : string) =
-    let a = name.Replace("-", "").ToCharArray()
-            |> Seq.groupBy (fun x -> x)
-            |> Map.ofSeq
-            |> Map.map (fun k v -> Seq.length v)
-
-    a.OrderByDescending((fun x -> x.Value)).ThenBy((fun x -> x.Key)) 
+    name.Replace("-", "").ToCharArray()
+    |> Seq.groupBy (fun x -> x)
+    |> Map.ofSeq
+    |> Map.map (fun k v -> Seq.length v)
+    |> (fun x -> x.OrderByDescending(fun y -> y.Value).ThenBy(fun y -> y.Key))
     |> Seq.take 5
     |> Seq.map (fun x -> x.Key.ToString())
     |> String.concat ""
