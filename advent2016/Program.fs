@@ -80,12 +80,15 @@ let main argv =
             let input = tryReadFile (if loc <> "" then loc else def)
 
             match input with
-            | Some(x) -> printfn "corrected code: %A" (correctError x)
+            | Some(x) -> 
+                printfn "corrected code (most common): %A" (correctError x true)
+                printfn "corrected code (least common): %A" (correctError x false)
             | None -> printfn "could not read file"
         | "quit" | "q" -> 
             printfn "Bye!"
         | _ -> 
             printfn "Unknown choice :("
 
+        printfn "Press any key to continue "
         Console.ReadLine() |> ignore
     0 // return an integer exit code
