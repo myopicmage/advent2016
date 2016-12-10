@@ -55,6 +55,12 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="utilities.fs" />
+    <Compile Include="adventday1.fs" />
+    <Compile Include="adventday2.fs" />
+    <Compile Include="adventday3.fs" />
+    <Compile Include="adventday4.fs" />
+    <Compile Include="adventday5.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
