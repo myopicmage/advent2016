@@ -38,3 +38,8 @@ let writeToFile list fileName =
     IO.File.WriteAllLines(fileName, processed)
 
     printfn "Wrote all to %A" fileName
+
+let strList (str : string) =
+    str.ToCharArray()
+    |> Array.map (fun x -> x.ToString())
+    |> Array.toList

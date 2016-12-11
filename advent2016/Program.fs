@@ -6,6 +6,7 @@ open adventday3
 open adventday4
 open adventday5
 open adventday6
+open adventday7
 
 [<EntryPoint>]
 let main argv = 
@@ -83,6 +84,18 @@ let main argv =
             | Some(x) -> 
                 printfn "corrected code (most common): %A" (correctError x true)
                 printfn "corrected code (least common): %A" (correctError x false)
+            | None -> printfn "could not read file"
+        | "7" ->
+            printfn "day 7"
+            let def = @"D:\adventinput\day7.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input = tryReadFile (if loc <> "" then loc else def)
+
+            match input with
+            | Some(x) -> 
+                printfn "tls: %A" (tls x)
+                printfn "ssl: %A" (ssl x)
             | None -> printfn "could not read file"
         | "quit" | "q" -> 
             printfn "Bye!"

@@ -21,8 +21,7 @@ let genChecksum (name : string) =
     |> String.concat ""
 
 let parse input =
-    let regex = "([a-z\-]*)([0-9]*)(\[[a-z]*\])"
-    let m = Regex(regex).Match(input)
+    let m = Regex("([a-z\-]*)([0-9]*)(\[[a-z]*\])").Match(input)
     let groups = List.tail [ for x in m.Groups -> x.Value ] |> List.toArray
     let name = groups.[0]
     let id = groups.[1]
@@ -30,15 +29,15 @@ let parse input =
 
     { name = name; id = (parseInt id); checksum = checksum }
 
-let isReal room = room.checksum = (genChecksum room.checksum)
+let isReal room = 
+    room.checksum = (genChecksum room.checksum)
 
 let decrypt room =
     let shiftBy = room.id % 26
 
     let shift (letter : char) =
         match letter with
-        | '-' -> ' '
-        | ' ' -> ' '
+        | '-' | ' ' -> ' '
         | _ -> 
             let cur = (int letter) + shiftBy
             if cur > 122 then char (cur - 26) else char cur
@@ -49,7 +48,7 @@ let decrypt room =
                         |> Seq.map (fun x -> x.ToString())
                         |> String.concat ""
 
-    { name = decryptedName; id = room.id; checksum = room.checksum }
+    { room with name = decryptedName }
 
 
 let realRooms text =
