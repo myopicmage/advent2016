@@ -67,3 +67,5 @@ let decryptedRooms text =
     |> Array.toSeq
     |> Seq.map parse
     |> Seq.map decrypt
+
+let roomSum x = realRooms x |> realRoomSum

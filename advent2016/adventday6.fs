@@ -24,3 +24,6 @@ let correctError input most =
     |> Seq.map (fun (index, element) -> element |> Seq.map snd)
     |> Seq.map (fun x -> common x most)
     |> String.concat ""
+
+let correctErrors input =
+    (sprintf "corrected code (most common): %A" (correctError input true)) + (sprintf "\ncorrected code (least common): %A" (correctError input false))

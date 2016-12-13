@@ -88,3 +88,6 @@ let ssl ips =
     |> Array.toSeq
     |> Seq.where sslAllowed
     |> Seq.length
+
+let both x =
+    (sprintf "tls: %A" (tls x)) + (sprintf "\nssl: %A" (ssl x))
