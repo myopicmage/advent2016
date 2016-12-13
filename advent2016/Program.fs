@@ -8,6 +8,7 @@ open adventday5
 open adventday6
 open adventday7
 open adventday8
+open adventday9
 
 [<EntryPoint>]
 let main argv = 
@@ -16,7 +17,7 @@ let main argv =
     let keepGoing c = if c = "quit" || c = "q" then false else true
 
     while keepGoing choice do
-        printfn "Available: Days 1-8"
+        printfn "Available: Days 1-9"
         printfn "Choose a day (quit to quit): "
 
         choice <- Console.ReadLine()
@@ -108,6 +109,18 @@ let main argv =
             match input with
             | Some(x) -> 
                 printfn "how many: %A" (litPixels x)
+            | None -> printfn "could not read file"
+        | "9" -> 
+            printfn "day 9"
+            printfn "WARNING: this took 3+ hours to run on my machine"
+            let def = @"D:\adventinput\day9.txt"
+            printfn "Input (default %A): " def
+            let loc = Console.ReadLine()
+            let input = tryReadFile (if loc <> "" then loc else def)
+
+            match input with
+            | Some(x) -> 
+                printfn "decompressed length: %A" (getLength x)
             | None -> printfn "could not read file"
         | "quit" | "q" -> 
             printfn "Bye!"
