@@ -65,6 +65,7 @@
     <Compile Include="adventday7.fs" />
     <Compile Include="adventday8.fs" />
     <Compile Include="adventday9.fs" />
+    <Compile Include="adventday10.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

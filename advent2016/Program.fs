@@ -9,6 +9,7 @@ open adventday6
 open adventday7
 open adventday8
 open adventday9
+open adventday10
 
 [<EntryPoint>]
 let main argv = 
@@ -32,6 +33,7 @@ let main argv =
         | "7" -> day 7 both
         | "8" -> day 8 litPixels
         | "9" -> dayWithLabel 9 getLength "WARNING: this took 3+ hours to run on my machine"
+        | "10" -> day 10 whichBot
         | "quit" | "q" -> printfn "Bye!"
         | _ -> printfn "Unknown choice :("
 
