@@ -3,18 +3,13 @@
 open utilities
 open System.Text.RegularExpressions
 
+type targettype = Bot | Output
+
 type bot = {
     id : int
-    low : int
-    high : int
-}
-
-type output = {
-    id : int
     values : int list
+    t_type : targettype
 }
-
-type targettype = Bot | Output
 
 type instruction = {
     botid : int
@@ -45,74 +40,41 @@ let matchGroup5 regex str =
 
 let (|Value|_|) str = matchGroup2 "value ([0-9]+) goes to bot ([0-9]+)" str
 
-let (|BotGive|_|) str = matchGroup5 "bot ([0-9]+) gives low to (output|bot) ([0-9]+) and high to (output|bot) ([0-9]+)" str
+let (|Give|_|) str = matchGroup5 "bot ([0-9]+) gives low to (output|bot) ([0-9]+) and high to (output|bot) ([0-9]+)" str
 
-let giveVal v bot =
-    if bot.low = -1 && bot.high = -1 then
-        { bot with low = v }
-    else if v > bot.low && v < bot.high then
-        { bot with low = v; }
-    else if v > bot.high then
-        { bot with low = bot.high; high = v }
-    else if v < bot.low then
-        { bot with low = v; high = bot.low }
-    else 
-        bot
+let tryFindById id t_type list = List.tryFind (fun x -> x.id = id && x.t_type = t_type) list
+let filterById id t_type list = List.filter (fun x -> x.id <> id && x.t_type <> t_type) list
 
-let tryFindOutputById id list : output option = List.tryFind (fun x -> x.id = id) list
-let filterOutputById id list : output list = List.filter (fun x -> x.id <> id) list
-let tryFindBotById id list : bot option = List.tryFind (fun x -> x.id = id) list
-let filterBotById id list : bot list = List.filter (fun x -> x.id <> id) list
+let giveVal id value t_type bots =
+    match tryFindById id t_type bots with
+    | Some x -> { x with values = value :: x.values } :: bots
+    | None -> { id = id; values = [value]; t_type = t_type } :: bots
 
-let addBot value id bots = bots @ [{ id = id; low = value; high = -1; }]
-
-let giveToBot id value (bots : bot list) =
-    let bot = tryFindBotById id bots
+let runCommand cmd bots commands =
+    let bot = tryFindById cmd.botid Bot bots
 
     match bot with
-    | Some x -> (filterBotById id bots) @ [(giveVal value x)]
-    | None -> bots @ [{ id = id; low = value; high = -1 }]
+    | Some b ->
+        if b.values.Length = 2 then
+            let newbots = 
+                bots
+                |> giveVal cmd.highid (List.max b.values) cmd.hightarget
+                |> giveVal cmd.lowid (List.min b.values) cmd.lowtarget
+                |> filterById b.id Bot
 
-let giveToOutput id value (outputs : output list) =
-    let output = tryFindOutputById id outputs
-
-    match output with
-    | Some x -> (filterOutputById id outputs) @ [{ x with values = x.values @ [value] }]
-    | None -> outputs @ [{ id = id; values = [value] }]
-
-let runCommand command (robots : bot list) (outs : output list) =
-    let run cmd (bot : bot) bots outputs =
-        let mutable b = bots
-        let mutable o = outputs
-
-        if cmd.botid = bot.id then
-            if bot.low > -1 && bot.high > -1 then
-                if cmd.lowtarget = Output then 
-                    b <- (filterBotById cmd.botid bots) @ [{ bot with low = -1 }]
-                    o <- (giveToOutput cmd.lowid bot.low outputs)
-                else 
-                    (filterBotById cmd.botid (giveToBot cmd.lowid bots)) @ [{ bot with low = -1 }], outputs
-
-                if cmd.hightarget = Output then 
-                    (filterBotById cmd.botid bots) @ [{ bot with high = -1 }], (giveToOutput cmd.highid bot.high outputs)
-                else
-                    (filterBotById cmd.botid (giveToBot cmd.highid bots)) @ [{ bot with high = -1 }], outputs
-            else
-                bots, outputs
+            { b with values = [] } :: newbots, commands
         else
-            bots, outputs
+            bots, cmd :: commands
+    | None -> bots, cmd :: commands
 
-    List.map (fun x -> run command x robots outs) robots
-
-
-//let addCommand (newCmd : instruction) (direction : instruction list) (robots : bot list) = 
-//    
-
-let parse line = 
+let parse line bots directions = 
     match line with
-    | Value (value, bot) -> printfn "value %A goes to bot %A" value bot
-    | BotGive (bot1, target1type, target1, target2type, target2) -> printfn "bot %A gives low to %A %A and high to %A %A" bot1 target1type target1 target2type target2 
-    | _ -> printfn "unknown command! %A" line
+    | Value (value, bot) -> 
+        giveVal bot value bots |> ignore
+    | Give (bot1, target1type, target1, target2type, target2) -> 
+        printfn "bot %A gives low to %A %A and high to %A %A" bot1 target1type target1 target2type target2 
+    | _ -> 
+        printfn "unknown command! %A" line
 
 let whichBot text =
     let parsed = text |> splitOnNewLine |> Array.map parse
